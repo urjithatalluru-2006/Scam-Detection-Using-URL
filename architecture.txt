@@ -1,0 +1,55 @@
+SCAM DETECTION PROJECT - SYSTEM ARCHITECTURE
+================================================
+
+1. TRAINING PIPELINE
+
+PhiUSIIL_Phishing_URL_Dataset.csv
+        |
+        v
+preprocess.py
+  - Loads and validates the raw dataset
+  - Removes invalid rows and duplicates
+  - Converts feature values and labels to numeric values
+        |
+        v
+cleaned_dataset.csv
+        |
+        v
+train_model.py
+  - Separates the label from numeric input features
+  - Creates a stratified training and test split
+  - Compares Random Forest, Extra Trees, and HistGradientBoosting
+    using stratified cross-validation
+  - Fits the selected imputer and classifier pipeline
+        |
+        v
+scam_detection_model.pkl
+  - Stores the fitted model pipeline and ordered feature names
+
+run_pipeline.py runs preprocess.py followed by train_model.py.
+
+2. PREDICTION FLOW
+
+User
+  |
+  v
+Streamlit app (app.py)
+  - Loads scam_detection_model.pkl
+  - Accepts a CSV containing the model's input feature columns
+  - Lets the user select a row
+        |
+        v
+Selected row and ordered model features
+  - Values are converted to numeric values
+        |
+        v
+Saved imputer and classifier pipeline
+        |
+        v
+Prediction label
+  - 0 = Phishing
+  - 1 = Legitimate
+
+LIMITATION
+The app predicts from precomputed dataset features. It does not extract features
+from a URL supplied by itself, so a URL alone is not enough for prediction.
